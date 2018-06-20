@@ -11,10 +11,17 @@
 |
 */
 
+$app->get('/', function () use ($app) {
+    return $app->version();
+});
 
-$router->post(
-    'auth/login',
-    [
-        'uses' => 'AuthController@authenticate'
-    ]
-);
+
+// login to get JWT token - no middleweare
+$app->post('auth/login', ['uses' => 'AuthController@authenticate']);
+
+
+$app->group(['middleware' => 'jwt.auth'], function() use ($app) {
+
+    $app->get('users', ['uses' => 'UserController@getAlUsers']);
+
+});
